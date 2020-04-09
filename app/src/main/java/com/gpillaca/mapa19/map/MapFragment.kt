@@ -15,7 +15,11 @@ import com.gpillaca.mapa19.common.ui.BaseFragment
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
-class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(), OnMapReadyCallback {
+class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
+    MapContract.View,
+    OnMapReadyCallback {
+
+    private lateinit var map: GoogleMap
 
     companion object {
         @JvmStatic
@@ -50,12 +54,31 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(), OnM
         presenter?.loadData()
     }
 
+    override fun showMakers(data: HashMap<String, String>) {
+        data.forEach { ( id, latLong)  ->
+            val position = latLong.split(',')
+            val latitude = position[0].toDouble()
+            val longitude = position[1].toDouble()
+
+            setMapLocation(id, latitude, longitude)
+        }
+    }
+
+    private fun setMapLocation(id: String, latitude: Double, longitude: Double) {
+        if (!::map.isInitialized) return
+
+        val position = LatLng(latitude, longitude)
+
+        with(map) {
+            addMarker(
+                MarkerOptions().position(position)
+                    .title("Marker $id in Peru")
+            )
+            moveCamera(CameraUpdateFactory.newLatLng(position))
+        }
+    }
+
     override fun onMapReady(googleMap: GoogleMap?) {
-        val sydney = LatLng(-12.0266034, -77.127863)
-        googleMap?.addMarker(
-            MarkerOptions().position(sydney)
-                .title("Marker in Peru")
-        )
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        map = googleMap ?: return
     }
 }

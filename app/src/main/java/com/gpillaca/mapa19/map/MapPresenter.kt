@@ -23,6 +23,8 @@ class MapPresenter(private val mapRepository: MapRepository) :
             val data = withContext(Dispatchers.IO) {
                 mapRepository.listVulnerablePersons()
             }
+
+            getView()?.showMakers(data.dataLatLong)
         }
     }
 }
