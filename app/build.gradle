@@ -67,6 +67,9 @@ dependencies {
     //Firebase SDK for Crashlytics
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta03'
 
+    //Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
