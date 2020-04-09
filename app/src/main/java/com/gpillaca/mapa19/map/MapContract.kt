@@ -8,6 +8,8 @@ interface MapContract {
     }
 
     interface Presenter: BaseContract.Presenter<View> {
-
+        fun loadData()
+        fun onInitScope()
+        fun onDestroyScope()
     }
 }

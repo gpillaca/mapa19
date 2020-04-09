@@ -1,5 +1,7 @@
 package com.gpillaca.mapa19.map
 
-interface MapRepository {
+import com.gpillaca.mapa19.server.MapDbResult
 
+interface MapRepository {
+    suspend fun listVulnerablePersons(): MapDbResult
 }
