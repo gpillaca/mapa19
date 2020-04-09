@@ -2,10 +2,20 @@ package com.gpillaca.mapa19
 
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.gpillaca.mapa19.common.di.appModule
 import com.gpillaca.mapa19.common.util.CrashlyticsTree
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.androidXModule
 import timber.log.Timber
 
-class ConfigurationApp: Application() {
+class ConfigurationApp: Application(), KodeinAware {
+
+    override val kodein: Kodein = Kodein.lazy {
+        import(androidXModule(this@ConfigurationApp))
+        import(appModule(applicationContext))
+    }
+
     override fun onCreate() {
         super.onCreate()
         initTimberWithFirebaseCrashlytics()
