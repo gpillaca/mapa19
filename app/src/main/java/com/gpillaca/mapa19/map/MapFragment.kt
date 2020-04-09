@@ -45,7 +45,9 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(), OnM
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        presenter?.onInitScope()
         supportMapFragment.getMapAsync(this)
+        presenter?.loadData()
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {

@@ -8,7 +8,9 @@ import org.kodein.di.generic.singleton
 
 fun mapModule() = Kodein.Module("mapModule") {
     bind<MapRepository>() with singleton {
-        MapRepositoryImpl()
+        MapRepositoryImpl(
+            retrofit = instance()
+        )
     }
 
     bind<MapPresenter>() with provider {
