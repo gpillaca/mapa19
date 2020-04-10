@@ -1,6 +1,8 @@
 package com.gpillaca.mapa19.map
 
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.gpillaca.mapa19.R
+import com.gpillaca.mapa19.common.isInt
+import com.gpillaca.mapa19.common.showMessage
 import kotlinx.android.synthetic.main.bottom_sheet_person.*
 import timber.log.Timber
 
@@ -77,8 +81,26 @@ class PersonBottomSheet : BottomSheetDialogFragment(),
             R.id.buttonHelp -> {
             }
             R.id.viewPhone -> {
-                dismiss()
+                callVulnerablePerson()
             }
         }
+    }
+
+    private fun callVulnerablePerson() {
+        if (vulnerablePerson == null ||
+            vulnerablePerson!!.phoneNumber.isEmpty() ||
+            !vulnerablePerson!!.phoneNumber.isInt()
+        ) {
+            context?.showMessage(getString(R.string.phone_number_invalid))
+            return
+        }
+
+        val phoneNumber = vulnerablePerson!!.phoneNumber.toInt()
+
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            data = Uri.parse("tel:$phoneNumber")
+        }
+
+        activity?.startActivity(intent)
     }
 }
