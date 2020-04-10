@@ -64,8 +64,8 @@ class PersonBottomSheet : BottomSheetDialogFragment(),
     }
 
     override fun onShow(dialog: DialogInterface?) {
-        val dialog = dialog as BottomSheetDialog
-        val bottomSheet = dialog.findViewById<View>(R.id.design_bottom_sheet) as FrameLayout
+        val bottomSheetDialog = dialog as BottomSheetDialog
+        val bottomSheet = bottomSheetDialog.findViewById<View>(R.id.design_bottom_sheet) as FrameLayout
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }

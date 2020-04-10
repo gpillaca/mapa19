@@ -1,5 +1,6 @@
 package com.gpillaca.mapa19.map
 
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +10,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.gson.Gson
 import com.gpillaca.mapa19.R
+import com.gpillaca.mapa19.common.fromJsonStringTo
+import com.gpillaca.mapa19.common.toJsonString
 import com.gpillaca.mapa19.common.ui.BaseFragment
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -65,26 +67,20 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     private fun setMapLocation(person: VulnerablePerson) = with(person) {
         if (!::map.isInitialized) return@with
 
-        val position = LatLng(latitude, longitude)
-        val title = Gson().toJson(person)
-
         with(map) {
             addMarker(
                 MarkerOptions()
-                    .position(position)
+                    .position(positionLatLng)
                     .anchor(0f, 1f)
                     .icon(addMaker(estHelp))
-                    .title(title)
+                    .title(person.toJsonString())
             )
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
-        map = googleMap ?: return
-        map.setOnMarkerClickListener(this)
-
-        //TODO get my position
-        val myPosition = LatLng(-12.0266034, -77.127863)
+    override fun showMyPosition(location: Location) {
+        //val myPosition = LatLng(-12.0266034, -77.127863)
+        val myPosition = LatLng(location.latitude, location.longitude)
         val cameraPosition: CameraPosition = CameraPosition.Builder()
             .target(myPosition)
             .zoom(14F)
@@ -93,21 +89,20 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
             .build()
 
         map.uiSettings.isMyLocationButtonEnabled = false
-        //map.isMyLocationEnabled = true //TODO request permission
+        map.isMyLocationEnabled = true
         map.uiSettings.isZoomControlsEnabled = false
         map.uiSettings.isCompassEnabled = false
         map.uiSettings.isMapToolbarEnabled = false
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
 
-        map.addMarker(
-            MarkerOptions()
-                .position(myPosition)
-                .title("Marker in Peru")
-        )
+    override fun onMapReady(googleMap: GoogleMap?) {
+        map = googleMap ?: return
+        map.setOnMarkerClickListener(this)
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        val vulnerablePerson: VulnerablePerson = Gson().fromJson(marker.title, VulnerablePerson::class.java)
+        val vulnerablePerson = marker.title.fromJsonStringTo<VulnerablePerson>()
         val bottomSheet = PersonBottomSheet.newInstance(vulnerablePerson)
 
         activity?.let {
@@ -135,5 +130,10 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         }
 
         return BitmapDescriptorFactory.fromResource(marker)
+    }
+
+    override fun onDestroyView() {
+        presenter?.onDestroyScope()
+        super.onDestroyView()
     }
 }

@@ -1,5 +1,6 @@
 package com.gpillaca.mapa19.map
 
+import com.google.android.gms.maps.model.LatLng
 import com.gpillaca.mapa19.server.MapDbResult
 import com.gpillaca.mapa19.server.MapDbService
 import retrofit2.Retrofit
@@ -17,8 +18,7 @@ class MapRepositoryImpl(private val retrofit: Retrofit): MapRepository {
 
             val person = VulnerablePerson(
                 id = id,
-                latitude = latitude,
-                longitude = longitude,
+                positionLatLng = LatLng(latitude, longitude),
                 name = name,
                 dni = dataResponse.dataDni.getValue(id),
                 phoneNumber = dataResponse.dataPhoneNumbers.getValue(id),
