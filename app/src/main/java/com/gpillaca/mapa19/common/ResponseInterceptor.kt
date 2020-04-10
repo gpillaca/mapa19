@@ -35,9 +35,9 @@ class ResponseInterceptor : Interceptor {
             dataLatLong = getData(responseJsonObject, "data_latlong"),
             dataNames =  getData(responseJsonObject, "data_names"),
             dataDni = getData(responseJsonObject, "data_dni"),
-            dataCel = getData(responseJsonObject, "data_cel"),
-            dataDes = getData(responseJsonObject, "data_des"),
-            dataTipo = getData(responseJsonObject, "data_tipo"),
+            dataPhoneNumbers = getData(responseJsonObject, "data_cel"),
+            dataMessage = getData(responseJsonObject, "data_des"),
+            dataType = getData(responseJsonObject, "data_tipo"),
             dataNoRep = getData(responseJsonObject, "data_norep"),
             dataEstHelp = getData(responseJsonObject, "data_esthelp"),
             dataNHelp = getData(responseJsonObject, "data_nhelp")

@@ -4,7 +4,7 @@ import com.gpillaca.mapa19.common.presenter.BaseContract
 
 interface MapContract {
     interface View: BaseContract.View {
-        fun showMakers(data: HashMap<String, String>)
+        fun showMakers(persons: List<VulnerablePerson>)
     }
 
     interface Presenter: BaseContract.Presenter<View> {
