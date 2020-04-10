@@ -9,10 +9,9 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
-import okio.Buffer
 import org.json.JSONArray
 import org.json.JSONObject
-import java.nio.charset.Charset
+import timber.log.Timber
 
 fun loggingInterceptor(): HttpLoggingInterceptor {
     return if (BuildConfig.DEBUG) {
@@ -27,27 +26,34 @@ class ResponseInterceptor : Interceptor {
         val request = chain.request()
         val response = chain.proceed(request)
 
-        val buffer: Buffer = response.body!!.source().buffer
-        var responseJsonObject = JSONObject(buffer.clone().readString(Charset.forName("UTF-8")))
+        try {
+            if (response.code == 200 && response.body != null) {
+                val responseBody = response.body!!
+                var responseJsonObject = JSONObject(responseBody.string())
+                val mapDbResult = MapDbResult(
+                    res = responseJsonObject.getString("res"),
+                    dataLatLong = getData(responseJsonObject, "data_latlong"),
+                    dataNames = getData(responseJsonObject, "data_names"),
+                    dataDni = getData(responseJsonObject, "data_dni"),
+                    dataPhoneNumbers = getData(responseJsonObject, "data_cel"),
+                    dataMessage = getData(responseJsonObject, "data_des"),
+                    dataType = getData(responseJsonObject, "data_tipo"),
+                    dataNoRep = getData(responseJsonObject, "data_norep"),
+                    dataEstHelp = getData(responseJsonObject, "data_esthelp"),
+                    dataNHelp = getData(responseJsonObject, "data_nhelp")
+                )
 
-        val mapDbResult = MapDbResult(
-            res = responseJsonObject.getString("res"),
-            dataLatLong = getData(responseJsonObject, "data_latlong"),
-            dataNames =  getData(responseJsonObject, "data_names"),
-            dataDni = getData(responseJsonObject, "data_dni"),
-            dataPhoneNumbers = getData(responseJsonObject, "data_cel"),
-            dataMessage = getData(responseJsonObject, "data_des"),
-            dataType = getData(responseJsonObject, "data_tipo"),
-            dataNoRep = getData(responseJsonObject, "data_norep"),
-            dataEstHelp = getData(responseJsonObject, "data_esthelp"),
-            dataNHelp = getData(responseJsonObject, "data_nhelp")
-        )
+                responseJsonObject = JSONObject(Gson().toJson(mapDbResult))
+                val contentType: MediaType? = responseBody.contentType()
+                val body: ResponseBody = responseJsonObject.toString().toResponseBody(contentType)
 
-        responseJsonObject = JSONObject(Gson().toJson(mapDbResult))
-        val contentType: MediaType? = response.body!!.contentType()
-        val body: ResponseBody = responseJsonObject.toString().toResponseBody(contentType)
+                return response.newBuilder().body(body).build()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
 
-        return response.newBuilder().body(body).build()
+        return response
     }
 
     private fun getData(jsonObject: JSONObject, key: String): HashMap<String, String> {

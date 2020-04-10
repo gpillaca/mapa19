@@ -1,13 +1,13 @@
 package com.gpillaca.mapa19.map
 
 import android.os.Parcelable
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class VulnerablePerson(
     val id: String,
-    val latitude: Double,
-    val longitude: Double,
+    val positionLatLng: LatLng,
     val name: String,
     val dni: String,
     val phoneNumber: String,

@@ -15,7 +15,7 @@ fun mapModule() = Kodein.Module("mapModule") {
 
     bind<MapPresenter>() with provider {
         MapPresenter(
-            mapRepository = instance()
-        )
+            mapRepository = instance(),
+            locationRepository = instance())
     }
 }
