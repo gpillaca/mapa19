@@ -18,6 +18,7 @@ import org.kodein.di.generic.instance
 class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     MapContract.View,
     GoogleMap.OnMarkerClickListener,
+    View.OnClickListener,
     OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
@@ -114,6 +115,16 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         }
 
         return true
+    }
+
+    override fun onClick(v: View?) {
+        val id = v?.id ?: 0
+
+        when (id) {
+            R.id.buttonHelp -> {
+                //TODO navigate to next activity
+            }
+        }
     }
 
     private fun addMaker(type: Int): BitmapDescriptor {
