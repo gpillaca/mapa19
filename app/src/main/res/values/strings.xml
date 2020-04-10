@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Mapa19</string>
+    <string name="i_want_to_help">Quiero ayudar</string>
+    <string name="telephone">Teléfono</string>
 </resources>

@@ -8,7 +8,8 @@ import kotlinx.coroutines.withContext
 
 class MapPresenter(private val mapRepository: MapRepository) :
     BasePresenter<MapContract.View>(),
-    MapContract.Presenter, Scope by Scope.Impl() {
+    MapContract.Presenter,
+    Scope by Scope.Impl() {
 
     override fun onInitScope() {
         initScope()
@@ -20,11 +21,11 @@ class MapPresenter(private val mapRepository: MapRepository) :
 
     override fun loadData() {
         launch {
-            val data = withContext(Dispatchers.IO) {
+            val persons = withContext(Dispatchers.IO) {
                 mapRepository.listVulnerablePersons()
             }
 
-            getView()?.showMakers(data.dataLatLong)
+            getView()?.showMakers(persons)
         }
     }
 }

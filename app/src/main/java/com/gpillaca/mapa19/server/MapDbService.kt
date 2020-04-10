@@ -6,5 +6,5 @@ import retrofit2.http.POST
 interface MapDbService {
     @Headers("Content-Type: application/x-www-form-urlencoded")
     @POST("listado_mapbd")
-    suspend fun listVulnerablePersons(): MapDbResult
+    suspend fun listData(): MapDbResult
 }
