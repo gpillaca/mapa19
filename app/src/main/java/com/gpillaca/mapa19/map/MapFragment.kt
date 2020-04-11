@@ -2,6 +2,7 @@ package com.gpillaca.mapa19.map
 
 import android.location.Location
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.clustering.Cluster
+import com.google.maps.android.clustering.ClusterItem
+import com.google.maps.android.clustering.ClusterManager
 import com.gpillaca.mapa19.R
 import com.gpillaca.mapa19.common.fromJsonStringTo
 import com.gpillaca.mapa19.common.toJsonString
@@ -17,14 +21,28 @@ import com.gpillaca.mapa19.common.ui.BaseFragment
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
+class PersonItem(private var position: LatLng, private var title: String, private var snippet: String) : ClusterItem {
+    override fun getSnippet(): String {
+        return snippet
+    }
+
+    override fun getTitle(): String {
+        return title
+    }
+
+    override fun getPosition(): LatLng {
+        return position
+    }
+}
+
 class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     MapContract.View,
-    GoogleMap.OnMarkerClickListener,
+    ClusterManager.OnClusterClickListener<PersonItem>,
     View.OnClickListener,
     OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
-
+    private lateinit var mClusterManager: ClusterManager<MyItem>
     companion object {
         @JvmStatic
         fun newInstance() = MapFragment()
@@ -55,13 +73,27 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         super.onViewCreated(view, savedInstanceState)
         supportMapFragment.getMapAsync(this)
         presenter?.onInitScope()
-        presenter?.loadData()
     }
 
     override fun showMakers(persons: List<VulnerablePerson>) {
-        persons.forEach { person ->
-            setMapLocation(person)
+
+        val metrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+
+        mClusterManager = ClusterManager<MyItem>(activity, map)
+        // mClusterManager.setAlgorithm(
+        // NonHierarchicalViewBasedAlgorithm<MyItem>(
+        // metrics.widthPixels, metrics.heightPixels
+        // )
+        // )
+
+        map.setOnCameraIdleListener(mClusterManager)
+        val d = mutableListOf<MyItem>()
+        persons.map { person ->
+            mClusterManager.addItem(MyItem(person.positionLatLng, "", ""))
+            //setMapLocation(person)
         }
+
     }
 
     private fun setMapLocation(person: VulnerablePerson) = with(person) {
@@ -83,7 +115,7 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         val myPosition = LatLng(location.latitude, location.longitude)
         val cameraPosition: CameraPosition = CameraPosition.Builder()
             .target(myPosition)
-            .zoom(14F)
+            .zoom(13F)
             .bearing(30f)
             .tilt(45F)
             .build()
@@ -98,16 +130,17 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
 
     override fun onMapReady(googleMap: GoogleMap?) {
         map = googleMap ?: return
+        presenter?.loadData()
         map.setOnMarkerClickListener(this)
     }
 
-    override fun onMarkerClick(marker: Marker): Boolean {
-        val vulnerablePerson = marker.title.fromJsonStringTo<VulnerablePerson>()
+    override fun onClusterClick(cluster: Cluster<PersonItem>?): Boolean {
+        /*val vulnerablePerson = marker.title.fromJsonStringTo<VulnerablePerson>()
         val bottomSheet = PersonBottomSheet.newInstance(vulnerablePerson)
 
         activity?.let {
             bottomSheet.show(it.supportFragmentManager, bottomSheet.tag)
-        }
+        }*/
 
         return true
     }
