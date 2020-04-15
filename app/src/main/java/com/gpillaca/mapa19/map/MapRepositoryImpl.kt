@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 
 class MapRepositoryImpl(private val retrofit: Retrofit): MapRepository {
 
-    override suspend fun listVulnerablePersons(): List<VulnerablePerson> {
+    override suspend fun listVulnerablePersons(): List<PersonItem> {
         val dataResponse: MapDbResult = retrofit.create(MapDbService::class.java).listData()
         val persons = mutableListOf<VulnerablePerson>()
 
@@ -32,6 +32,6 @@ class MapRepositoryImpl(private val retrofit: Retrofit): MapRepository {
             persons.add(person)
         }
 
-        return persons
+        return persons.convertToPersonItems()
     }
 }

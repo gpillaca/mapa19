@@ -5,8 +5,10 @@ import com.gpillaca.mapa19.common.presenter.BaseContract
 
 interface MapContract {
     interface View: BaseContract.View {
-        fun showMakers(persons: List<VulnerablePerson>)
+        fun showMakers(persons: List<PersonItem>)
         fun showMyPosition(location: Location)
+        fun showLoading()
+        fun hideLoading()
     }
 
     interface Presenter: BaseContract.Presenter<View> {

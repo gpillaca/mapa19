@@ -26,6 +26,7 @@ class MapPresenter(
 
     override fun loadData() {
         launch {
+            getView()?.showLoading()
             val persons = async(Dispatchers.IO) {
                 mapRepository.listVulnerablePersons()
             }
@@ -36,6 +37,7 @@ class MapPresenter(
 
             getView()?.showMyPosition(myPosition.await())
             getView()?.showMakers(persons.await())
+            getView()?.hideLoading()
         }
     }
 

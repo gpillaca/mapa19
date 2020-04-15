@@ -18,17 +18,21 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    def properties = new Properties()
+    properties.load(new FileInputStream(rootProject.file("keys.properties")))
+
     buildTypes {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+            println(project.findProperty("GOOGLE_MAPS_API_KEY")?.toString())
+            resValue "string", "google_maps_key", properties.getProperty("GOOGLE_MAPS_API_KEY", "")
         }
 
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+            resValue "string", "google_maps_key", properties.getProperty("GOOGLE_MAPS_API_KEY", "")
         }
     }
 
