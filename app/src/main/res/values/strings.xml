@@ -4,4 +4,11 @@
     <string name="telephone">Teléfono</string>
     <string name="ask_for_help">Solicitar ayuda</string>
     <string name="phone_number_invalid">El número de teléfono no es válido</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="next">Seguir</string>
+    <string name="confirm">Sí</string>
+    <string name="is_your_location">Es tu ubicación?</string>
+    <string name="move_map">Mueve el mapa al punto de origen</string>
 </resources>
