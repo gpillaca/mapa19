@@ -14,7 +14,8 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.gpillaca.mapa19.R
 import com.gpillaca.mapa19.common.defaultConfig
-import kotlinx.android.synthetic.main.fragment_find_me.*
+import com.gpillaca.mapa19.databinding.FragmentFindMeBinding
+import com.gpillaca.mapa19.databinding.ViewProgressBarBinding
 import timber.log.Timber
 
 class FindMeFragment : Fragment(),
@@ -24,6 +25,8 @@ class FindMeFragment : Fragment(),
 
     private lateinit var map: GoogleMap
     private lateinit var supportMapFragment: SupportMapFragment
+    private lateinit var binding: FragmentFindMeBinding
+    private lateinit var loadingBinding: ViewProgressBarBinding
 
     private var circleRadius = 0
     private var isMoving = false
@@ -32,10 +35,11 @@ class FindMeFragment : Fragment(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_find_me, container, false)
+        binding = FragmentFindMeBinding.inflate(inflater, container, false)
+        loadingBinding = ViewProgressBarBinding.bind(binding.root)
         supportMapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        return view
+        return binding.root
     }
 
     companion object {
@@ -56,27 +60,27 @@ class FindMeFragment : Fragment(),
     }
 
     override fun onCameraMoveStarted(p0: Int) {
-        textViewDragMessage.visibility = View.VISIBLE
+        binding.textViewDragMessage.visibility = View.VISIBLE
         isMoving = true
-        progress.visibility = View.GONE
-        viewPinCircle.background =
-            ContextCompat.getDrawable(progress.context, R.drawable.circle_background_moving)
+        loadingBinding.progress.visibility = View.GONE
+        binding.viewPinCircle.background =
+            ContextCompat.getDrawable(loadingBinding.progress.context, R.drawable.circle_background_moving)
         resizeLayout(false)
     }
 
     override fun onCameraIdle() {
         isMoving = false
 
-        progress.visibility = View.VISIBLE
+            loadingBinding.progress.visibility = View.VISIBLE
         resizeLayout(true)
-        textViewDragMessage.visibility = View.GONE
+        binding.textViewDragMessage.visibility = View.GONE
 
         // TODO refactor
         Handler().postDelayed({
             if (!isMoving) {
-                viewPinCircle.background =
-                    ContextCompat.getDrawable(progress.context, R.drawable.circle_background)
-                progress.visibility = View.GONE
+                binding.viewPinCircle.background =
+                    ContextCompat.getDrawable(loadingBinding.progress.context, R.drawable.circle_background)
+                loadingBinding.progress.visibility = View.GONE
             }
         }, 1500)
     }
@@ -94,15 +98,15 @@ class FindMeFragment : Fragment(),
     }
 
     private fun resizeLayout(backToNormalSize: Boolean) {
-        val params = viewPinCircle.layoutParams
-        val vto: ViewTreeObserver = viewPinCircle.viewTreeObserver
+        val params = binding.viewPinCircle.layoutParams
+        val vto: ViewTreeObserver = binding.viewPinCircle.viewTreeObserver
 
-        circleRadius = viewPinCircle.measuredWidth
+        circleRadius = binding.viewPinCircle.measuredWidth
 
         vto.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                viewPinCircle.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                circleRadius = viewPinCircle.measuredWidth
+                binding.viewPinCircle.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                circleRadius = binding.viewPinCircle.measuredWidth
             }
         })
 
@@ -115,6 +119,6 @@ class FindMeFragment : Fragment(),
             Timber.e("${(circleRadius * 0.3).toInt()}   ${circleRadius - circleRadius / 3}    ")
         }
 
-        viewPinCircle.layoutParams = params
+        binding.viewPinCircle.layoutParams = params
     }
 }

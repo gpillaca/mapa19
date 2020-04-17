@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.gpillaca.mapa19.R
 import com.gpillaca.mapa19.common.isInt
 import com.gpillaca.mapa19.common.showMessage
-import kotlinx.android.synthetic.main.bottom_sheet_person.*
+import com.gpillaca.mapa19.databinding.BottomSheetPersonBinding
 import timber.log.Timber
 
 class PersonBottomSheet : BottomSheetDialogFragment(),
@@ -24,6 +24,7 @@ class PersonBottomSheet : BottomSheetDialogFragment(),
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
 
     private var vulnerablePerson: VulnerablePerson? = null
+    private lateinit var binding: BottomSheetPersonBinding
 
     companion object {
         private const val ARG_PERSON = "PersonBottomSheet:person"
@@ -46,21 +47,22 @@ class PersonBottomSheet : BottomSheetDialogFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return View.inflate(context, R.layout.bottom_sheet_person, null)
+        binding = BottomSheetPersonBinding.inflate(inflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        buttonHelp.setOnClickListener(this)
-        viewPhone.setOnClickListener(this)
+        binding.buttonHelp.setOnClickListener(this)
+        binding.viewPhone.setOnClickListener(this)
         showData()
     }
 
     private fun showData() {
         vulnerablePerson?.let {
-            textViewName.text = it.name
-            textViewPhoneNumber.text = it.phoneNumber
-            textViewMessage.text = it.message
+            binding.textViewName.text = it.name
+            binding.textViewPhoneNumber.text = it.phoneNumber
+            binding.textViewMessage.text = it.message
         } ?: kotlin.run {
             Timber.e("Movies is null")
             dismiss()
