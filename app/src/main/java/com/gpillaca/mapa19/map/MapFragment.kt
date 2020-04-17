@@ -1,5 +1,6 @@
 package com.gpillaca.mapa19.map
 
+import android.content.Context
 import android.location.Location
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -15,9 +16,11 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.algo.NonHierarchicalViewBasedAlgorithm
 import com.gpillaca.mapa19.R
+import com.gpillaca.mapa19.common.defaultConfig
 import com.gpillaca.mapa19.common.fromJsonStringTo
 import com.gpillaca.mapa19.common.toJsonString
 import com.gpillaca.mapa19.common.ui.BaseFragment
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.view_progra_bar.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -31,10 +34,15 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
 
     private lateinit var map: GoogleMap
     private lateinit var mClusterManager: ClusterManager<PersonItem>
+    private var listener: ActionListener? = null
 
     companion object {
         @JvmStatic
         fun newInstance() = MapFragment()
+    }
+
+    interface ActionListener {
+        fun navigateToFindMe()
     }
 
     private lateinit var supportMapFragment: SupportMapFragment
@@ -62,6 +70,7 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         super.onViewCreated(view, savedInstanceState)
         supportMapFragment.getMapAsync(this)
         presenter?.onInitScope()
+        buttonHelp.setOnClickListener(this)
     }
 
     override fun showMakers(persons: List<PersonItem>) {
@@ -111,11 +120,7 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
             .tilt(45F)
             .build()
 
-        map.uiSettings.isMyLocationButtonEnabled = false
-        map.isMyLocationEnabled = true
-        map.uiSettings.isZoomControlsEnabled = false
-        map.uiSettings.isCompassEnabled = false
-        map.uiSettings.isMapToolbarEnabled = false
+        map.defaultConfig()
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
@@ -151,7 +156,7 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
 
         when (id) {
             R.id.buttonHelp -> {
-                //TODO navigate to next activity
+                listener?.navigateToFindMe()
             }
         }
     }
@@ -169,5 +174,13 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     override fun onDestroyView() {
         presenter?.onDestroyScope()
         super.onDestroyView()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is ActionListener) {
+            listener = context
+        }
     }
 }

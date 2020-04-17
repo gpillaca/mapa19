@@ -2,6 +2,7 @@ package com.gpillaca.mapa19.common
 
 import android.content.Context
 import android.widget.Toast
+import com.google.android.gms.maps.GoogleMap
 import com.google.gson.Gson
 
 inline fun <reified T> String.fromJsonStringTo(): T {
@@ -18,4 +19,12 @@ fun String.isInt(): Boolean {
 
 fun Context.showMessage(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
+
+fun GoogleMap.defaultConfig() = apply {
+    uiSettings.isMyLocationButtonEnabled = false
+    uiSettings.isZoomControlsEnabled = false
+    uiSettings.isCompassEnabled = false
+    isMyLocationEnabled = true
+    uiSettings.isMapToolbarEnabled = false
 }
