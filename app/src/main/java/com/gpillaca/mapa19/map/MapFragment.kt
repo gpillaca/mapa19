@@ -20,8 +20,8 @@ import com.gpillaca.mapa19.common.defaultConfig
 import com.gpillaca.mapa19.common.fromJsonStringTo
 import com.gpillaca.mapa19.common.toJsonString
 import com.gpillaca.mapa19.common.ui.BaseFragment
-import kotlinx.android.synthetic.main.fragment_map.*
-import kotlinx.android.synthetic.main.view_progra_bar.*
+import com.gpillaca.mapa19.databinding.FragmentMapBinding
+import com.gpillaca.mapa19.databinding.ViewProgressBarBinding
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
@@ -33,8 +33,10 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
-    private lateinit var mClusterManager: ClusterManager<PersonItem>
+    private lateinit var clusterManager: ClusterManager<PersonItem>
     private var listener: ActionListener? = null
+    private lateinit var binding: FragmentMapBinding
+    private lateinit var loadingBinding: ViewProgressBarBinding
 
     companion object {
         @JvmStatic
@@ -51,10 +53,11 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_map, container, false)
+        binding = FragmentMapBinding.inflate(inflater, container, false)
+        loadingBinding = ViewProgressBarBinding.bind(binding.root)
         supportMapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        return view
+        return binding.root
     }
 
     override fun initPresenter(): MapContract.Presenter {
@@ -70,7 +73,7 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         super.onViewCreated(view, savedInstanceState)
         supportMapFragment.getMapAsync(this)
         presenter?.onInitScope()
-        buttonHelp.setOnClickListener(this)
+        binding.buttonHelp.setOnClickListener(this)
     }
 
     override fun showMakers(persons: List<PersonItem>) {
@@ -80,21 +83,21 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     private fun setUpClusterManager(persons: List<PersonItem>) {
         val metrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        mClusterManager = ClusterManager(context, map)
-        mClusterManager.setAlgorithm(
+        clusterManager = ClusterManager(context, map)
+        clusterManager.setAlgorithm(
             NonHierarchicalViewBasedAlgorithm<PersonItem>(
                 metrics.widthPixels,
                 metrics.heightPixels
             )
         )
 
-        context?.let { mClusterManager.renderer = MarkerClusterRender(it, map, mClusterManager) }
-        mClusterManager.setOnClusterItemClickListener(this)
-        map.setOnCameraIdleListener(mClusterManager)
-        map.setOnMarkerClickListener(mClusterManager)
+        context?.let { clusterManager.renderer = MarkerClusterRender(it, map, clusterManager) }
+        clusterManager.setOnClusterItemClickListener(this)
+        map.setOnCameraIdleListener(clusterManager)
+        map.setOnMarkerClickListener(clusterManager)
 
-        mClusterManager.addItems(persons)
-        mClusterManager.cluster()
+        clusterManager.addItems(persons)
+        clusterManager.cluster()
     }
 
     private fun setMapLocation(person: VulnerablePerson) = with(person) {
@@ -130,11 +133,11 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     }
 
     override fun showLoading() {
-        progress.visibility = View.VISIBLE
+        loadingBinding.progress.visibility = View.VISIBLE
     }
 
     override fun hideLoading() {
-        progress.visibility = View.GONE
+        loadingBinding.progress.visibility = View.GONE
     }
 
     override fun onClusterClick(cluster: Cluster<PersonItem>?): Boolean {

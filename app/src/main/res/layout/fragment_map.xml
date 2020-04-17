@@ -25,5 +25,5 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <include layout="@layout/view_progra_bar" />
+    <include layout="@layout/view_progress_bar" />
 </androidx.constraintlayout.widget.ConstraintLayout>
