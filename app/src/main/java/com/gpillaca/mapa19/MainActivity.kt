@@ -2,14 +2,18 @@ package com.gpillaca.mapa19
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.gpillaca.mapa19.databinding.ActivityMainBinding
 import com.gpillaca.mapa19.map.FindMeFragment
 import com.gpillaca.mapa19.map.MapFragment
 
 class MainActivity : AppCompatActivity(), MapFragment.ActionListener {
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         supportFragmentManager
             .beginTransaction()
