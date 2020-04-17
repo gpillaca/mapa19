@@ -2,8 +2,8 @@ package com.gpillaca.mapa19
 
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.gpillaca.mapa19.common.di.appModule
-import com.gpillaca.mapa19.common.util.CrashlyticsTree
+import com.gpillaca.mapa19.di.appModule
+import com.gpillaca.mapa19.util.CrashlyticsTree
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
