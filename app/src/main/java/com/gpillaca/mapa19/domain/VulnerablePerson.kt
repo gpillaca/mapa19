@@ -1,4 +1,4 @@
-package com.gpillaca.mapa19.ui.map
+package com.gpillaca.mapa19.domain
 
 import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng

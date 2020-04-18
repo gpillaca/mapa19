@@ -15,6 +15,7 @@ import com.gpillaca.mapa19.R
 import com.gpillaca.mapa19.util.isInt
 import com.gpillaca.mapa19.util.showMessage
 import com.gpillaca.mapa19.databinding.BottomSheetPersonBinding
+import com.gpillaca.mapa19.domain.VulnerablePerson
 import timber.log.Timber
 
 class PersonBottomSheet : BottomSheetDialogFragment(),

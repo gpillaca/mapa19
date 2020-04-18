@@ -1,20 +1,17 @@
 package com.gpillaca.mapa19.di
 
 import android.content.Context
+import com.gpillaca.mapa19.data.database.AppDataBase
 import com.gpillaca.mapa19.data.prefs.AppSharedPreferences
-
+import com.gpillaca.mapa19.data.repository.LocationRepository
+import com.gpillaca.mapa19.data.repository.LocationRepositoryImpl
+import com.gpillaca.mapa19.data.source.*
 import com.gpillaca.mapa19.ui.common.ResponseInterceptor
 import com.gpillaca.mapa19.ui.common.httpClient
 import com.gpillaca.mapa19.ui.common.loggingInterceptor
 import com.gpillaca.mapa19.util.AndroidHelper
 import com.gpillaca.mapa19.util.PermissionHelper
 import com.gpillaca.mapa19.util.PermissionHelperImpl
-import com.gpillaca.mapa19.data.source.LocalDataSource
-import com.gpillaca.mapa19.data.source.LocationDataSource
-import com.gpillaca.mapa19.data.repository.LocationRepository
-import com.gpillaca.mapa19.data.source.PlayServiceDataSource
-import com.gpillaca.mapa19.data.repository.LocationRepositoryImpl
-import com.gpillaca.mapa19.data.source.SharedPreferencesDataSource
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
@@ -31,14 +28,28 @@ fun appModule(context: Context) = Kodein.Module("appModule") {
     bind<AndroidHelper>() with provider { AndroidHelper(context = instance()) }
     import(retrofitModule())
     import(localDataModule())
+
+    bind<AppDataBase>() with provider {
+        AppDataBase.build(
+            context = instance()
+        )
+    }
+
+    bind<RemoteDataSource>() with provider {
+        RetrofitDataSource(
+            retrofit = instance()
+        )
+    }
+
     bind<LocationDataSource>() with provider {
         PlayServiceDataSource(
             context = instance()
         )
     }
+
     bind<LocationRepository>() with singleton {
         LocationRepositoryImpl(
-            localDataSource = instance(tag = "sharedPreferences"),
+            localDataSource = instance(),
             locationDataSource = instance()
         )
     }
@@ -61,11 +72,24 @@ fun retrofitModule() = Kodein.Module("retrofitModule") {
 }
 
 fun localDataModule() = Kodein.Module("localDataModule") {
-    bind<LocalDataSource>(tag = "sharedPreferences") with singleton {
-        SharedPreferencesDataSource(
+    bind<SharedPreferencesDataSource>() with singleton {
+        SharedPreferencesDataSourceImpl(
             sharedPreferences = AppSharedPreferences(
                 context = instance()
             )
+        )
+    }
+
+    bind<RoomDataSource>() with provider {
+        RoomDataSourceImpl(
+            appDataBase = instance()
+        )
+    }
+
+    bind<LocalDataSource>() with provider {
+        LocalDataSourceImpl(
+            roomDataSource = instance(),
+            sharedPreferencesDataSource = instance()
         )
     }
 }

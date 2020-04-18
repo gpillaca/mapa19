@@ -22,6 +22,9 @@ import com.gpillaca.mapa19.util.toJsonString
 import com.gpillaca.mapa19.ui.common.BaseFragment
 import com.gpillaca.mapa19.databinding.FragmentMapBinding
 import com.gpillaca.mapa19.databinding.ViewProgressBarBinding
+import com.gpillaca.mapa19.di.mapModule
+import com.gpillaca.mapa19.domain.Legend
+import com.gpillaca.mapa19.domain.VulnerablePerson
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
@@ -162,6 +165,12 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
                 listener?.navigateToFindMe()
             }
         }
+    }
+
+    override fun showLegend(legend: Legend) {
+        binding.cardViewLegend.visibility = View.VISIBLE
+        binding.textViewHelp.text = legend.numHelp.toString()
+        binding.textViewHelped.text = legend.numHelped.toString()
     }
 
     private fun addMaker(type: Int): BitmapDescriptor {

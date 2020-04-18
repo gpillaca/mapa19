@@ -3,6 +3,7 @@ package com.gpillaca.mapa19.ui.map
 import com.gpillaca.mapa19.ui.common.BasePresenter
 import com.gpillaca.mapa19.ui.common.Scope
 import com.gpillaca.mapa19.data.repository.LocationRepository
+import com.gpillaca.mapa19.data.repository.MapRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -35,8 +36,13 @@ class MapPresenter(
                 locationRepository.myPosition()
             }
 
+            val legend = async(Dispatchers.IO) {
+                mapRepository.legend()
+            }
+
             getView()?.showMyPosition(myPosition.await())
             getView()?.showMakers(persons.await())
+            getView()?.showLegend(legend.await())
             getView()?.hideLoading()
         }
     }
