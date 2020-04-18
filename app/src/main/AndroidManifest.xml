@@ -26,7 +26,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".splash.SplashActivity"
+            android:name="com.gpillaca.mapa19.ui.splash.SplashActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +35,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" />
+        <activity android:name=".ui.main.MainActivity" />
     </application>
 </manifest>

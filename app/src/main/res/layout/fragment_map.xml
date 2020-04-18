@@ -10,6 +10,82 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewLegend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="4dp"
+        android:visibility="gone"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonHelp"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="4dp">
+
+            <ImageView
+                android:id="@+id/imageViewHelped"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_helped"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewLabelHelped"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/families_helped"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewHelped"
+                app:layout_constraintLeft_toRightOf="@+id/imageViewHelped"
+                app:layout_constraintTop_toTopOf="@id/imageViewHelped" />
+
+            <TextView
+                android:id="@+id/textViewHelped"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewLabelHelped"
+                app:layout_constraintLeft_toRightOf="@+id/textViewLabelHelped"
+                app:layout_constraintTop_toTopOf="@id/textViewLabelHelped" />
+
+            <ImageView
+                android:id="@+id/imageViewHelp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_help"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewHelped" />
+
+            <TextView
+                android:id="@+id/textViewLabelHelp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/families_for_helping"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewHelp"
+                app:layout_constraintLeft_toRightOf="@+id/imageViewHelp"
+                app:layout_constraintTop_toTopOf="@id/imageViewHelp" />
+
+            <TextView
+                android:id="@+id/textViewHelp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewLabelHelp"
+                app:layout_constraintLeft_toRightOf="@+id/textViewLabelHelp"
+                app:layout_constraintTop_toTopOf="@id/textViewLabelHelp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
     <Button
         android:id="@+id/buttonHelp"
         android:layout_width="0dp"

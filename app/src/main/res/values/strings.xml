@@ -4,9 +4,8 @@
     <string name="telephone">Teléfono</string>
     <string name="ask_for_help">Solicitar ayuda</string>
     <string name="phone_number_invalid">El número de teléfono no es válido</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="families_for_helping">Familias por ayudar: </string>
+    <string name="families_helped">Familias ayudadas: </string>
     <string name="next">Seguir</string>
     <string name="confirm">Sí</string>
     <string name="is_your_location">Es tu ubicación?</string>
