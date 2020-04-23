@@ -16,4 +16,7 @@ interface VulnerablePersonDao {
 
     @Query("SELECT COUNT(id) FROM VulnerablePerson")
     fun vulnerablePersonCount(): Int
+
+    @Query("DELETE FROM VulnerablePerson")
+    fun deleteAll()
 }
