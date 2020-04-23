@@ -73,7 +73,7 @@ fun retrofitModule() = Kodein.Module("retrofitModule") {
 
 fun localDataModule() = Kodein.Module("localDataModule") {
     bind<PreferencesDataSource>() with singleton {
-        SharedPreferencesDataSourceImpl(
+        SharedPreferencesDataSource(
             sharedPreferences = AppSharedPreferences(
                 context = instance()
             )
