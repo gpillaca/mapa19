@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.gpillaca.mapa19">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -26,8 +27,8 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.gpillaca.mapa19.ui.splash.SplashActivity"
-            android:launchMode="singleTop">
+            android:name=".ui.splash.SplashActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,6 +36,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
+            android:name=".ui.findme.FindMeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
     </application>
+
 </manifest>

@@ -1,4 +1,4 @@
-package com.gpillaca.mapa19.ui.map
+package com.gpillaca.mapa19.ui.findme
 
 import android.os.Bundle
 import android.os.Handler
@@ -9,27 +9,33 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewTreeObserver
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import com.google.android.gms.maps.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.gpillaca.mapa19.R
-import com.gpillaca.mapa19.util.defaultConfig
 import com.gpillaca.mapa19.databinding.FragmentFindMeBinding
 import com.gpillaca.mapa19.databinding.ViewProgressBarBinding
+import com.gpillaca.mapa19.di.finMeModule
+import com.gpillaca.mapa19.ui.common.BaseFragment
+import com.gpillaca.mapa19.util.defaultConfig
+import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
-class FindMeFragment : Fragment(),
+class FindMeFragment : BaseFragment<FindMeContract.View, FindMeContract.Presenter>(),
+    FindMeContract.View,
     OnMapReadyCallback,
     GoogleMap.OnCameraMoveStartedListener,
     GoogleMap.OnCameraIdleListener {
 
     private lateinit var map: GoogleMap
-    private lateinit var supportMapFragment: SupportMapFragment
     private lateinit var binding: FragmentFindMeBinding
     private lateinit var loadingBinding: ViewProgressBarBinding
 
     private var circleRadius = 0
     private var isMoving = false
+    private var handler: Handler? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +43,6 @@ class FindMeFragment : Fragment(),
     ): View? {
         binding = FragmentFindMeBinding.inflate(inflater, container, false)
         loadingBinding = ViewProgressBarBinding.bind(binding.root)
-        supportMapFragment =
-            childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         return binding.root
     }
 
@@ -47,9 +51,19 @@ class FindMeFragment : Fragment(),
         fun newInstance() = FindMeFragment()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        supportMapFragment.getMapAsync(this)
+    override fun initPresenter(): FindMeContract.Presenter {
+        val mPresenter by instance<FindMeContract.Presenter>()
+        return mPresenter
+    }
+
+    override fun fragmentModule() = Kodein.Module("fragmentModule") {
+        import(finMeModule())
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        binding.mapView.onCreate(savedInstanceState)
+        binding.mapView.getMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
@@ -59,27 +73,59 @@ class FindMeFragment : Fragment(),
         map.setOnCameraIdleListener(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.mapView.onResume()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.mapView.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.mapView.onDestroy()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.mapView.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.mapView.onSaveInstanceState(outState)
+    }
+
     override fun onCameraMoveStarted(p0: Int) {
         binding.textViewDragMessage.visibility = View.VISIBLE
         isMoving = true
         loadingBinding.progress.visibility = View.GONE
         binding.viewPinCircle.background =
-            ContextCompat.getDrawable(loadingBinding.progress.context, R.drawable.circle_background_moving)
+            ContextCompat.getDrawable(
+                loadingBinding.progress.context,
+                R.drawable.circle_background_moving
+            )
         resizeLayout(false)
     }
 
     override fun onCameraIdle() {
         isMoving = false
 
-            loadingBinding.progress.visibility = View.VISIBLE
+        loadingBinding.progress.visibility = View.VISIBLE
         resizeLayout(true)
         binding.textViewDragMessage.visibility = View.GONE
 
         // TODO refactor
-        Handler().postDelayed({
+        handler = Handler()
+        handler?.postDelayed({
             if (!isMoving) {
                 binding.viewPinCircle.background =
-                    ContextCompat.getDrawable(loadingBinding.progress.context, R.drawable.circle_background)
+                    ContextCompat.getDrawable(
+                        loadingBinding.progress.context,
+                        R.drawable.circle_background
+                    )
                 loadingBinding.progress.visibility = View.GONE
             }
         }, 1500)
@@ -120,5 +166,10 @@ class FindMeFragment : Fragment(),
         }
 
         binding.viewPinCircle.layoutParams = params
+    }
+
+    override fun onDestroyView() {
+        handler?.removeCallbacksAndMessages(null)
+        super.onDestroyView()
     }
 }

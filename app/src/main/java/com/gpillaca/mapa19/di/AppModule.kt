@@ -49,7 +49,7 @@ fun appModule(context: Context) = Kodein.Module("appModule") {
 
     bind<LocationRepository>() with singleton {
         LocationRepositoryImpl(
-            localDataSource = instance(),
+            dataBaseDataSource = instance(),
             locationDataSource = instance()
         )
     }
@@ -72,7 +72,7 @@ fun retrofitModule() = Kodein.Module("retrofitModule") {
 }
 
 fun localDataModule() = Kodein.Module("localDataModule") {
-    bind<SharedPreferencesDataSource>() with singleton {
+    bind<PreferencesDataSource>() with singleton {
         SharedPreferencesDataSourceImpl(
             sharedPreferences = AppSharedPreferences(
                 context = instance()
@@ -80,16 +80,9 @@ fun localDataModule() = Kodein.Module("localDataModule") {
         )
     }
 
-    bind<RoomDataSource>() with provider {
-        RoomDataSourceImpl(
+    bind<DataBaseDataSource>() with provider {
+        RoomDataSource(
             appDataBase = instance()
-        )
-    }
-
-    bind<LocalDataSource>() with provider {
-        LocalDataSourceImpl(
-            roomDataSource = instance(),
-            sharedPreferencesDataSource = instance()
         )
     }
 }

@@ -4,6 +4,7 @@ import com.gpillaca.mapa19.ui.common.BasePresenter
 import com.gpillaca.mapa19.ui.common.Scope
 import com.gpillaca.mapa19.data.repository.LocationRepository
 import com.gpillaca.mapa19.data.repository.MapRepository
+import com.gpillaca.mapa19.ui.map.cluster.PersonItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ class MapPresenter(
     Scope by Scope.Impl()
 {
 
-    override fun onInitScope() {
+    override fun onCreateScope() {
         initScope()
     }
 
@@ -36,15 +37,20 @@ class MapPresenter(
                 locationRepository.myPosition()
             }
 
-            val legend = async(Dispatchers.IO) {
-                mapRepository.legend()
-            }
-
             getView()?.showMyPosition(myPosition.await())
-            getView()?.showMakers(persons.await())
-            getView()?.showLegend(legend.await())
-            getView()?.hideLoading()
+            showMarkers(persons.await())
         }
+    }
+
+    private suspend fun showMarkers(persons: List<PersonItem>) {
+        getView()?.showMakers(persons)
+
+        val legend = withContext(Dispatchers.IO) {
+            mapRepository.legend()
+        }
+
+        getView()?.showLegend(legend)
+        getView()?.hideLoading()
     }
 
     override fun showMyPosition() {

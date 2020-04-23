@@ -53,4 +53,12 @@ abstract class BasePresenter<V : BaseContract.View> :
     override fun onPresenterCreated() {
 
     }
+
+    override fun onCreateScope() {
+
+    }
+
+    override fun onDestroyScope() {
+
+    }
 }

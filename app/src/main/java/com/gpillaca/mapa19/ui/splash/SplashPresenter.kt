@@ -5,9 +5,6 @@ import com.gpillaca.mapa19.ui.common.Scope
 
 class SplashPresenter :
     BasePresenter<SplashContract.View>(), SplashContract.Presenter,
-    Scope by Scope.Impl()
-{
-    override fun onLocationRequest(requestCode: Int) {
+    Scope by Scope.Impl() {
 
-    }
 }

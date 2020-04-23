@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.gpillaca.mapa19.R
+import com.gpillaca.mapa19.di.splashModule
 import com.gpillaca.mapa19.ui.common.BaseFragment
 import com.gpillaca.mapa19.util.PermissionHelper
 import org.kodein.di.Kodein
@@ -66,7 +67,8 @@ class SplashFragment : BaseFragment<SplashContract.View, SplashContract.Presente
         grantResults: IntArray
     ) {
         if (grantResults.isNotEmpty() &&
-            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
             if (requestCode == REQUEST_LOCATION) {
                 listener?.navigateToActivity()
             }

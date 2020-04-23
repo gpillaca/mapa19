@@ -1,4 +1,4 @@
-package com.gpillaca.mapa19.ui.map
+package com.gpillaca.mapa19.ui.map.cluster
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem

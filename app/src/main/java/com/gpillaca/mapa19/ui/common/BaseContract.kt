@@ -16,5 +16,7 @@ interface BaseContract {
         fun getStateBundle(): Bundle
         fun onPresenterDestroy()
         fun onPresenterCreated()
+        fun onCreateScope()
+        fun onDestroyScope()
     }
 }

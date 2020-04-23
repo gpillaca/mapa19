@@ -1,24 +1,28 @@
 package com.gpillaca.mapa19.data.repository
 
 import com.gpillaca.mapa19.data.convertToPersonItems
-import com.gpillaca.mapa19.data.source.LocalDataSource
+import com.gpillaca.mapa19.data.source.DataBaseDataSource
 import com.gpillaca.mapa19.data.source.RemoteDataSource
 import com.gpillaca.mapa19.domain.Legend
-import com.gpillaca.mapa19.ui.map.PersonItem
+import com.gpillaca.mapa19.ui.map.cluster.PersonItem
 
 class MapRepositoryImpl(
-    private val localDataSource: LocalDataSource,
+    private val dataBaseDataSource: DataBaseDataSource,
     private val remoteDataSource: RemoteDataSource
 ) : MapRepository {
 
     override suspend fun listVulnerablePersons(): List<PersonItem> {
-        val vulnerablePersons = remoteDataSource.listVulnerablePersons()
-        localDataSource.insertVulnerablePersons(vulnerablePersons)
+        if (dataBaseDataSource.isEmpty()) {
+            val vulnerablePersons = remoteDataSource.listVulnerablePersons()
+            dataBaseDataSource.insertVulnerablePersons(vulnerablePersons)
+        }
 
-        return localDataSource.getAll().convertToPersonItems()
+        return dataBaseDataSource.getAll().map {
+            it.convertToPersonItems()
+        }
     }
 
     override suspend fun legend(): Legend {
-        return localDataSource.legend()
+        return dataBaseDataSource.legend()
     }
 }

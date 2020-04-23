@@ -1,4 +1,4 @@
-package com.gpillaca.mapa19.ui.map
+package com.gpillaca.mapa19.ui.map.cluster
 
 import android.content.Context
 import android.view.ViewGroup
@@ -24,7 +24,10 @@ class MarkerClusterRender(
     init {
         iconGenerator = IconGenerator(context)
         markerImageView = ImageView(context)
-        markerImageView?.layoutParams = ViewGroup.LayoutParams(MARKER_DIMENSION, MARKER_DIMENSION)
+        markerImageView?.layoutParams = ViewGroup.LayoutParams(
+            MARKER_DIMENSION,
+            MARKER_DIMENSION
+        )
         iconGenerator?.setContentView(markerImageView)
     }
 

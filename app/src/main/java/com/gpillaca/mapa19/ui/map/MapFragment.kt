@@ -10,21 +10,22 @@ import android.view.ViewGroup
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.algo.NonHierarchicalViewBasedAlgorithm
 import com.gpillaca.mapa19.R
-import com.gpillaca.mapa19.util.defaultConfig
-import com.gpillaca.mapa19.util.fromJsonStringTo
-import com.gpillaca.mapa19.util.toJsonString
-import com.gpillaca.mapa19.ui.common.BaseFragment
 import com.gpillaca.mapa19.databinding.FragmentMapBinding
 import com.gpillaca.mapa19.databinding.ViewProgressBarBinding
 import com.gpillaca.mapa19.di.mapModule
 import com.gpillaca.mapa19.domain.Legend
 import com.gpillaca.mapa19.domain.VulnerablePerson
+import com.gpillaca.mapa19.ui.common.BaseFragment
+import com.gpillaca.mapa19.ui.map.cluster.MarkerClusterRender
+import com.gpillaca.mapa19.ui.map.cluster.PersonItem
+import com.gpillaca.mapa19.util.defaultConfig
+import com.gpillaca.mapa19.util.fromJsonStringTo
+import com.gpillaca.mapa19.util.toJsonString
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
@@ -40,6 +41,7 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     private var listener: ActionListener? = null
     private lateinit var binding: FragmentMapBinding
     private lateinit var loadingBinding: ViewProgressBarBinding
+    private var isRestore = false
 
     companion object {
         @JvmStatic
@@ -50,7 +52,10 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         fun navigateToFindMe()
     }
 
-    private lateinit var supportMapFragment: SupportMapFragment
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isRestore = savedInstanceState != null
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,8 +63,6 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
     ): View? {
         binding = FragmentMapBinding.inflate(inflater, container, false)
         loadingBinding = ViewProgressBarBinding.bind(binding.root)
-        supportMapFragment =
-            childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         return binding.root
     }
 
@@ -72,10 +75,20 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         import(mapModule())
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.mapView.onSaveInstanceState(outState)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        binding.mapView.onCreate(savedInstanceState)
+        binding.mapView.getMapAsync(this)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        supportMapFragment.getMapAsync(this)
-        presenter?.onInitScope()
+        presenter?.onCreateScope()
         binding.buttonHelp.setOnClickListener(this)
     }
 
@@ -94,7 +107,13 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
             )
         )
 
-        context?.let { clusterManager.renderer = MarkerClusterRender(it, map, clusterManager) }
+        context?.let { clusterManager.renderer =
+            MarkerClusterRender(
+                it,
+                map,
+                clusterManager
+            )
+        }
         clusterManager.setOnClusterItemClickListener(this)
         map.setOnCameraIdleListener(clusterManager)
         map.setOnMarkerClickListener(clusterManager)
@@ -117,17 +136,24 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         }
     }
 
-    override fun showMyPosition(location: Location) {
-        val myPosition = LatLng(location.latitude, location.longitude)
-        val cameraPosition: CameraPosition = CameraPosition.Builder()
-            .target(myPosition)
-            .zoom(13F)
-            .bearing(30f)
-            .tilt(45F)
-            .build()
+    override fun onResume() {
+        super.onResume()
+        binding.mapView.onResume()
+    }
 
+    override fun showMyPosition(location: Location) {
         map.defaultConfig()
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
+        if (!isRestore) {
+            val myPosition = LatLng(location.latitude, location.longitude)
+            val cameraPosition: CameraPosition = CameraPosition.Builder()
+                .target(myPosition)
+                .zoom(13F)
+                .bearing(30f)
+                .tilt(45F)
+                .build()
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
@@ -185,6 +211,7 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
 
     override fun onDestroyView() {
         presenter?.onDestroyScope()
+        binding.mapView.onDestroy()
         super.onDestroyView()
     }
 
@@ -194,5 +221,10 @@ class MapFragment : BaseFragment<MapContract.View, MapContract.Presenter>(),
         if (context is ActionListener) {
             listener = context
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.mapView.onPause()
     }
 }

@@ -1,10 +1,11 @@
 package com.gpillaca.mapa19.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.gpillaca.mapa19.R
 import com.gpillaca.mapa19.databinding.ActivityMainBinding
-import com.gpillaca.mapa19.ui.map.FindMeFragment
+import com.gpillaca.mapa19.ui.findme.FindMeActivity
 import com.gpillaca.mapa19.ui.map.MapFragment
 
 class MainActivity : AppCompatActivity(), MapFragment.ActionListener {
@@ -18,16 +19,16 @@ class MainActivity : AppCompatActivity(), MapFragment.ActionListener {
 
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.frameLayoutContent, MapFragment.newInstance(), MapFragment::class.java.simpleName)
-            .show(MapFragment.newInstance())
-            .commit()
+            .replace(
+                R.id.frameLayoutContent,
+                MapFragment.newInstance(),
+                MapFragment::class.java.simpleName
+            )
+            .addToBackStack(null).commit()
+
     }
 
     override fun navigateToFindMe() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.frameLayoutContent, FindMeFragment.newInstance())
-            .addToBackStack(MapFragment::class.java.simpleName)
-            .commit()
+        startActivity(Intent(this, FindMeActivity::class.java))
     }
 }

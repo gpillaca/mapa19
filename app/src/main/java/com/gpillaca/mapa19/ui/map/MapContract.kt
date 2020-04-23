@@ -3,6 +3,7 @@ package com.gpillaca.mapa19.ui.map
 import android.location.Location
 import com.gpillaca.mapa19.domain.Legend
 import com.gpillaca.mapa19.ui.common.BaseContract
+import com.gpillaca.mapa19.ui.map.cluster.PersonItem
 
 interface MapContract {
     interface View: BaseContract.View {
@@ -16,7 +17,5 @@ interface MapContract {
     interface Presenter: BaseContract.Presenter<View> {
         fun showMyPosition()
         fun loadData()
-        fun onInitScope()
-        fun onDestroyScope()
     }
 }

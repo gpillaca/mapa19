@@ -12,7 +12,7 @@ import org.kodein.di.generic.singleton
 fun mapModule() = Kodein.Module("mapModule") {
     bind<MapRepository>() with singleton {
         MapRepositoryImpl(
-            localDataSource = instance(),
+            dataBaseDataSource = instance(),
             remoteDataSource = instance()
         )
     }

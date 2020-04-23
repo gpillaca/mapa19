@@ -9,8 +9,11 @@ import androidx.room.Query
 interface VulnerablePersonDao {
 
     @Query("SELECT * FROM VulnerablePerson")
-    fun getVAll(): List<VulnerablePerson>
+    fun getAll(): List<VulnerablePerson>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertVulnerablePersons(vulnerablePersons: List<VulnerablePerson>)
+
+    @Query("SELECT COUNT(id) FROM VulnerablePerson")
+    fun vulnerablePersonCount(): Int
 }
