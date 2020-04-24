@@ -12,8 +12,8 @@ import org.kodein.di.generic.singleton
 fun mapModule() = Kodein.Module("mapModule") {
     bind<MapRepository>() with singleton {
         MapRepositoryImpl(
-            dataBaseDataSource = instance(),
-            remoteDataSource = instance()
+            persistentStorage = instance(),
+            remoteDataSource = instance("fakeRetrofit")
         )
     }
 

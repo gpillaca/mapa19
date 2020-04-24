@@ -31,4 +31,9 @@ class MainActivity : AppCompatActivity(), MapFragment.ActionListener {
     override fun navigateToFindMe() {
         startActivity(Intent(this, FindMeActivity::class.java))
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
 }

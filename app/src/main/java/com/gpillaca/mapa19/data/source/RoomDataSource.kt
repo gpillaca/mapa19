@@ -8,27 +8,27 @@ import com.gpillaca.mapa19.domain.VulnerablePerson
 
 class RoomDataSource(
     appDataBase: AppDataBase
-) : DataBaseDataSource {
+) : DataBaseStorage {
 
     private val vulnerablePersonDao = appDataBase.vulnerablePersonDao()
 
-    override fun getAll(): List<VulnerablePerson> {
+    override suspend fun getAll(): List<VulnerablePerson> {
         return vulnerablePersonDao.getAll().map {
             it.toDomainVulnerablePersons()
         }
     }
 
-    override fun isEmpty(): Boolean {
+    override suspend fun isEmpty(): Boolean {
         return vulnerablePersonDao.vulnerablePersonCount() <= 0
     }
 
-    override fun insertVulnerablePersons(vulnerablePersons: List<VulnerablePerson>) {
+    override suspend fun insertVulnerablePersons(vulnerablePersons: List<VulnerablePerson>) {
         vulnerablePersonDao.insertVulnerablePersons(vulnerablePersons.map {
             it.toDataBaseVulnerablePersons()
         })
     }
 
-    override fun legend(): Legend {
+    override suspend fun legend(): Legend {
         val numHelp: Int = vulnerablePersonDao.getAll().filter {
             it.estHelp == 2
         }.size

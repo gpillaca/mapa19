@@ -35,9 +35,15 @@ fun appModule(context: Context) = Kodein.Module("appModule") {
         )
     }
 
-    bind<RemoteDataSource>() with provider {
+    bind<RemoteDataSource>(tag = "retrofit") with provider {
         RetrofitDataSource(
             retrofit = instance()
+        )
+    }
+
+    bind<RemoteDataSource>(tag = "fakeRetrofit") with provider {
+        FakeRetrofitDataSource(
+            context = instance()
         )
     }
 
@@ -72,6 +78,10 @@ fun retrofitModule() = Kodein.Module("retrofitModule") {
 }
 
 fun localDataModule() = Kodein.Module("localDataModule") {
+    bind<PersistentStorage>() with singleton {
+        InMemoryPersistentStorage()
+    }
+
     bind<PreferencesDataSource>() with singleton {
         SharedPreferencesDataSource(
             sharedPreferences = AppSharedPreferences(
@@ -80,7 +90,7 @@ fun localDataModule() = Kodein.Module("localDataModule") {
         )
     }
 
-    bind<DataBaseDataSource>() with provider {
+    bind<DataBaseStorage>() with provider {
         RoomDataSource(
             appDataBase = instance()
         )
